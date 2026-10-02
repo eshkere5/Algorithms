@@ -18,6 +18,7 @@ private:
         }
 
         T* newData = new T[newCapacity];
+
         try {
             for (std::size_t i = 0; i < size_; ++i) {
                 newData[i] = data_[i];
@@ -34,13 +35,15 @@ private:
 
 public:
     explicit Vector(std::size_t size = 0)
-        : data_(size == 0 ? nullptr : new T[size]),
+        : data_(size == 0 ? nullptr : new T[size]()),
           size_(size), capacity_(size)
     {
     }
 
     Vector(const Vector& other)
-        : data_(other.capacity_ == 0 ? nullptr : new T[other.capacity_]),
+        : data_(other.capacity_ == 0
+                    ? nullptr
+                    : new T[other.capacity_]),
           size_(other.size_), capacity_(other.capacity_)
     {
         try {
@@ -57,10 +60,12 @@ public:
     {
         if (this != &other) {
             Vector copy(other);
+
             std::swap(data_, copy.data_);
             std::swap(size_, copy.size_);
             std::swap(capacity_, copy.capacity_);
         }
+
         return *this;
     }
 
@@ -69,14 +74,47 @@ public:
         delete[] data_;
     }
 
-    std::size_t size() const { return size_; }
-    bool empty() const { return size_ == 0; }
+    std::size_t size() const
+    {
+        return size_;
+    }
+
+    bool empty() const
+    {
+        return size_ == 0;
+    }
+
+    void resize(std::size_t newSize)
+    {
+        if (newSize > capacity_) {
+            std::size_t newCapacity =
+                capacity_ == 0 ? 1 : capacity_;
+
+            while (newCapacity < newSize) {
+                if (newCapacity > static_cast<std::size_t>(-1) / 2) {
+                    newCapacity = newSize;
+                    break;
+                }
+
+                newCapacity *= 2;
+            }
+
+            reserve(newCapacity);
+        }
+
+        for (std::size_t i = size_; i < newSize; ++i) {
+            data_[i] = T{};
+        }
+
+        size_ = newSize;
+    }
 
     T& get(std::size_t index)
     {
         if (index >= size_) {
             throw std::out_of_range("Vector index out of range");
         }
+
         return data_[index];
     }
 
@@ -85,6 +123,7 @@ public:
         if (index >= size_) {
             throw std::out_of_range("Vector index out of range");
         }
+
         return data_[index];
     }
 
@@ -98,6 +137,7 @@ public:
         if (empty()) {
             throw std::out_of_range("Vector is empty");
         }
+
         return data_[size_ - 1];
     }
 
@@ -106,15 +146,18 @@ public:
         if (empty()) {
             throw std::out_of_range("Vector is empty");
         }
+
         return data_[size_ - 1];
     }
 
     void push_back(const T& value)
     {
         T copy(value);
+
         if (size_ == capacity_) {
             reserve(capacity_ == 0 ? 1 : capacity_ * 2);
         }
+
         data_[size_] = copy;
         ++size_;
     }
@@ -124,6 +167,7 @@ public:
         if (empty()) {
             throw std::out_of_range("Vector is empty");
         }
+
         --size_;
     }
 };
