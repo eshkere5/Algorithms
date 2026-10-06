@@ -6,6 +6,8 @@
 #include <stdexcept>
 #include <string>
 
+typedef Vector<std::string> Script;
+
 struct Position {
     int row;
     int column;
@@ -24,7 +26,7 @@ char hexDigit(int value)
     return "0123456789ABCDEF"[value & 15];
 }
 
-void run(const Vector<std::string>& script, std::istream& input)
+void run(const Script& script, std::istream& input)
 {
     if (script.empty()) {
         throw std::runtime_error("Empty script");
@@ -179,7 +181,7 @@ int main(int argc, char* argv[])
             throw std::runtime_error("Cannot open script or input file");
         }
 
-        Vector<std::string> script;
+        Script script;
         std::string line;
         while (std::getline(scriptFile, line)) {
             if (!line.empty() && line.back() == '\r') line.pop_back();

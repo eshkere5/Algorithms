@@ -17,7 +17,7 @@ private:
             return;
         }
 
-        T* newData = new T[newCapacity];
+        T* newData = new T[newCapacity]();
 
         try {
             for (std::size_t i = 0; i < size_; ++i) {
@@ -43,7 +43,7 @@ public:
     Vector(const Vector& other)
         : data_(other.capacity_ == 0
                     ? nullptr
-                    : new T[other.capacity_]),
+                    : new T[other.capacity_]()),
           size_(other.size_), capacity_(other.capacity_)
     {
         try {
@@ -102,7 +102,7 @@ public:
             reserve(newCapacity);
         }
 
-        for (std::size_t i = size_; i < newSize; ++i) {
+        for (std::size_t i = newSize; i < size_; ++i) {
             data_[i] = T{};
         }
 
@@ -154,12 +154,12 @@ public:
     {
         T copy(value);
 
-        if (size_ == capacity_) {
-            reserve(capacity_ == 0 ? 1 : capacity_ * 2);
+        if (size_ == static_cast<std::size_t>(-1)) {
+            throw std::length_error("Vector size is too large");
         }
 
-        data_[size_] = copy;
-        ++size_;
+        resize(size_ + 1);
+        data_[size_ - 1] = copy;
     }
 
     void pop_back()
@@ -168,6 +168,6 @@ public:
             throw std::out_of_range("Vector is empty");
         }
 
-        --size_;
+        resize(size_ - 1);
     }
 };
