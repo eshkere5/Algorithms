@@ -18,3 +18,10 @@ add_lab3_test(TestLab3_Example input_example.txt 4)
 add_lab3_test(TestLab3_Layers  input_layers.txt  2)
 add_lab3_test(TestLab3_Walls   input_walls.txt   7)
 add_lab3_test(TestLab3_Nearest input_nearest.txt 1)
+add_test(
+    NAME TestLab3_Unreachable
+    COMMAND Lab3 ${CMAKE_CURRENT_SOURCE_DIR}/input_unreachable.txt
+)
+set_tests_properties(TestLab3_Unreachable PROPERTIES
+    FAIL_REGULAR_EXPRESSION "[0-9]"
+)
